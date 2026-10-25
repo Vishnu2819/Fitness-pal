@@ -1,51 +1,39 @@
-# React + TypeScript + Vite
+# Fitness Pal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A macro calculator. Enter your stats and goal, and it works out your daily calories, a protein/carb/fat split, a meal-by-meal plan and a projected timeline to your target weight.
 
-Currently, two official plugins are available:
+**Live demo:** https://vishnu2819.github.io/Fitness-pal/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## What it does
 
-## Expanding the ESLint configuration
+- **Calories:** BMR from Mifflin-St Jeor, or Katch-McArdle when you enter a body-fat %, times an activity factor to get maintenance (TDEE), then a deficit or surplus based on your weekly pace (about 7,700 kcal per kg).
+- **Safety checks:** it never goes below 1,200 kcal (women) or 1,500 kcal (men), and it warns about aggressive deficits, fast bulks, a target weight that contradicts the goal, and under-18 users.
+- **Macros:** five diet styles (balanced, high protein, low carb, keto, or custom sliders). Protein is set in g/kg and is based on lean mass when body fat is known.
+- **Meal plan:** splits the day across 2–6 meals, with snacks weighted at half a meal.
+- **Timeline:** a weekly weight projection with your goal line, plus weeks-to-target.
+- **Extras:** BMI, water and fiber targets, lean mass.
+- **Convenience:** switching between imperial and metric converts the values already entered. Inputs are saved to `localStorage`, and **Share this plan** copies a link that recreates your inputs.
+- **Accessible and responsive:** labelled controls, radio-group semantics for toggles, a text alternative on each chart, and automatic dark mode.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tech
 
-- Configure the top-level `parserOptions` property like this:
+React 18 · TypeScript · Vite · Vitest · ESLint, with no UI libraries. The charts are hand-written SVG.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+All the math is in [`src/lib/calc.ts`](src/lib/calc.ts) as pure functions with unit tests in [`src/lib/calc.test.ts`](src/lib/calc.test.ts). Form parsing, validation and unit conversion are in [`src/lib/state.ts`](src/lib/state.ts).
+
+## Run locally
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm test         # unit tests
+npm run build    # production build in ./dist
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Deploy
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+Every push to `main` runs lint, tests and the build in GitHub Actions, then publishes `dist/` to GitHub Pages (`.github/workflows/deploy.yml`).
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
-# Fitness-pal
+---
+
+*These are estimates from standard formulas, not medical advice.*
